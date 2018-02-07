@@ -1,0 +1,76 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+$script = <<SCRIPT
+echo Provisioning...
+echo "192.168.33.30    kube-master" >> /etc/hosts
+SCRIPT
+
+config.vm.provision "shell", inline:$script  # provisioning
+ 
+ config.vm.define :vm1 do |vm1|
+    vm1.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
+    vm1.vm.hostname = "kube-master"
+    vm1.vm.network "private_network", ip: "192.168.33.30"
+    #vm2.vm.network "forwarded_port", guest: 80, host: 8181
+    #vm3.vm.synced_folder ".", "/vagrant", disabled: true
+    #vm3.vm.synced_folder "/root/vagrant/share", "/vagrant-vm-share", type: "rsync"
+        vm1.vm.provider "virtualbox" do |vb1|
+                vb1.name = "kube-master"
+                vb1.customize ["modifyvm", :id, "--memory", 1024]
+                vb1.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        end
+  end
+ 
+
+ config.vm.define :vm2 do |vm2|
+    vm2.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
+    vm2.vm.hostname = "kube-node2"
+    vm2.vm.network "private_network", ip: "192.168.33.32"
+    #vm2.vm.network "forwarded_port", guest: 80, host: 8181
+    #vm3.vm.synced_folder ".", "/vagrant", disabled: true
+    #vm3.vm.synced_folder "/root/vagrant/share", "/vagrant-vm-share", type: "rsync"
+        vm2.vm.provider "virtualbox" do |vb2|
+                vb2.name = "kube-node2"
+                vb2.customize ["modifyvm", :id, "--memory", 1024]
+                vb2.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        end
+  end
+
+
+ config.vm.define :vm3 do |vm3|
+    vm3.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
+    vm3.vm.hostname = "kube-node3"
+    vm3.vm.network "private_network", ip: "192.168.33.33"
+    #vm3.vm.network "forwarded_port", guest: 80, host: 8181
+    #vm3.vm.synced_folder ".", "/vagrant", disabled: true
+    #vm3.vm.synced_folder "/root/vagrant/share", "/vagrant-vm-share", type: "rsync"
+        vm3.vm.provider "virtualbox" do |vb3|
+	     	vb3.name = "kube-node3"
+		vb3.customize ["modifyvm", :id, "--memory", 1024]
+		vb3.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+	end
+  end
+
+  config.vm.define :vm4 do |vm4|
+    vm4.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
+    vm4.vm.hostname = "kube-node4"
+    vm4.vm.network "private_network", ip: "192.168.33.34"
+    #vm4.vm.network "forwarded_port", guest: 80, host: 8181
+    #vm4.vm.synced_folder ".", "/vagrant", disabled: true
+    #vm4.vm.synced_folder "/root/vagrant/share2", "/vagrant-vm-share", owner: "root", group: "root"
+    	vm4.vm.provider "virtualbox" do |vb4|
+		vb4.name = "kube-node4"
+		vb4.customize ["modifyvm", :id, "--memory", 1024]
+		vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        end
+  end
+
+  
+end
