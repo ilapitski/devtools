@@ -8,8 +8,11 @@
 Vagrant.configure("2") do |config|
 
 $script = <<SCRIPT
-echo Provisioning...
-echo '192.168.33.30    kube-master' >> /etc/hosts
+echo 'trying to install flannel network layer'
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 SCRIPT
 
 config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
@@ -28,6 +31,8 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
         end
     vm1.vm.provision "shell", path: "hosts_master.sh"
     vm1.vm.provision "shell", path: "master.sh"
+    vm1.vm.provision "shell", inline: $script, privileged: false 
+    vm1.vm.provision "shell", inline: "kubectl get pods --all-namespaces=true"
   end
  
 
@@ -62,20 +67,20 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
     vm3.vm.provision "shell", path: "hosts_node3.sh"
   end
 
-  config.vm.define :vm4 do |vm4|
-    vm4.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
-    vm4.vm.hostname = "kube-node4"
-    vm4.vm.network "private_network", ip: "192.168.33.34"
+  #config.vm.define :vm4 do |vm4|
+    #vm4.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
+    #vm4.vm.hostname = "kube-node4"
+    #vm4.vm.network "private_network", ip: "192.168.33.34"
     #vm4.vm.network "forwarded_port", guest: 80, host: 8181
     #vm4.vm.synced_folder ".", "/vagrant", disabled: true
     #vm4.vm.synced_folder "/root/vagrant/share2", "/vagrant-vm-share", owner: "root", group: "root"
-    	vm4.vm.provider "virtualbox" do |vb4|
-		vb4.name = "kube-node4"
-		vb4.customize ["modifyvm", :id, "--memory", 1024]
-		vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-        end
-    vm4.vm.provision "shell", path: "hosts_node4.sh"
-  end
+    	#vm4.vm.provider "virtualbox" do |vb4|
+		#vb4.name = "kube-node4"
+		#vb4.customize ["modifyvm", :id, "--memory", 1024]
+		#vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        #end
+    #vm4.vm.provision "shell", path: "hosts_node4.sh"
+  #end
 
   
 end
