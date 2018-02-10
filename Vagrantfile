@@ -9,10 +9,10 @@ Vagrant.configure("2") do |config|
 
 $script = <<SCRIPT
 echo Provisioning...
-echo "192.168.33.30    kube-master" >> /etc/hosts
+echo '192.168.33.30    kube-master' >> /etc/hosts
 SCRIPT
 
-config.vm.provision "shell", inline:$script  # provisioning
+config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
  
  config.vm.define :vm1 do |vm1|
     vm1.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
@@ -23,9 +23,10 @@ config.vm.provision "shell", inline:$script  # provisioning
     #vm3.vm.synced_folder "/root/vagrant/share", "/vagrant-vm-share", type: "rsync"
         vm1.vm.provider "virtualbox" do |vb1|
                 vb1.name = "kube-master"
-                vb1.customize ["modifyvm", :id, "--memory", 1024]
+                vb1.customize ["modifyvm", :id, "--memory", 2048]
                 vb1.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         end
+    vm1.vm.provision "shell", path: "hosts_master.sh"
   end
  
 
@@ -41,6 +42,7 @@ config.vm.provision "shell", inline:$script  # provisioning
                 vb2.customize ["modifyvm", :id, "--memory", 1024]
                 vb2.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         end
+    vm2.vm.provision "shell", path: "hosts_node2.sh"
   end
 
 
@@ -56,6 +58,7 @@ config.vm.provision "shell", inline:$script  # provisioning
 		vb3.customize ["modifyvm", :id, "--memory", 1024]
 		vb3.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 	end
+    vm3.vm.provision "shell", path: "hosts_node3.sh"
   end
 
   config.vm.define :vm4 do |vm4|
@@ -70,6 +73,7 @@ config.vm.provision "shell", inline:$script  # provisioning
 		vb4.customize ["modifyvm", :id, "--memory", 1024]
 		vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         end
+    vm4.vm.provision "shell", path: "hosts_node4.sh"
   end
 
   
