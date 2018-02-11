@@ -21,7 +21,7 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
     vm1.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
     vm1.vm.hostname = "kube-master"
     vm1.vm.network "private_network", ip: "192.168.33.30"
-    #vm2.vm.network "forwarded_port", guest: 80, host: 8181
+    vm1.vm.network "forwarded_port", guest: 8001, host: 8001
     #vm3.vm.synced_folder ".", "/vagrant", disabled: true
     #vm3.vm.synced_folder "/root/vagrant/share", "/vagrant-vm-share", type: "rsync"
         vm1.vm.provider "virtualbox" do |vb1|
@@ -32,7 +32,8 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
     vm1.vm.provision "shell", path: "hosts_master.sh"
     vm1.vm.provision "shell", path: "master.sh"
     vm1.vm.provision "shell", inline: $script, privileged: false 
-    vm1.vm.provision "shell", inline: "kubectl get pods --all-namespaces=true"
+    vm1.vm.provision "shell", inline: "kubectl get pods --all-namespaces=true", privileged: false
+    #vm1.vm.provision "shell", inline: "kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml", privileged: false
   end
  
 
@@ -60,27 +61,26 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
     #vm3.vm.synced_folder ".", "/vagrant", disabled: true
     #vm3.vm.synced_folder "/root/vagrant/share", "/vagrant-vm-share", type: "rsync"
         vm3.vm.provider "virtualbox" do |vb3|
-	     	vb3.name = "kube-node3"
+ 	     	vb3.name = "kube-node3"
 		vb3.customize ["modifyvm", :id, "--memory", 1024]
 		vb3.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 	end
     vm3.vm.provision "shell", path: "hosts_node3.sh"
   end
 
-  #config.vm.define :vm4 do |vm4|
-    #vm4.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
-    #vm4.vm.hostname = "kube-node4"
-    #vm4.vm.network "private_network", ip: "192.168.33.34"
+  config.vm.define :vm4 do |vm4|
+    vm4.vm.box = "sbeliakou/centos-7.4-x86_64-minimal"
+    vm4.vm.hostname = "kube-node4"
+    vm4.vm.network "private_network", ip: "192.168.33.34"
     #vm4.vm.network "forwarded_port", guest: 80, host: 8181
     #vm4.vm.synced_folder ".", "/vagrant", disabled: true
     #vm4.vm.synced_folder "/root/vagrant/share2", "/vagrant-vm-share", owner: "root", group: "root"
-    	#vm4.vm.provider "virtualbox" do |vb4|
-		#vb4.name = "kube-node4"
-		#vb4.customize ["modifyvm", :id, "--memory", 1024]
-		#vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-        #end
-    #vm4.vm.provision "shell", path: "hosts_node4.sh"
-  #end
+    	vm4.vm.provider "virtualbox" do |vb4|
+		vb4.name = "kube-node4"
+		vb4.customize ["modifyvm", :id, "--memory", 1024]
+		vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        end
+    vm4.vm.provision "shell", path: "hosts_node4.sh"
+  end
 
-  
 end
