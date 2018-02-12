@@ -27,7 +27,7 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
         vm1.vm.provider "virtualbox" do |vb1|
                 vb1.name = "kube-master"
                 vb1.customize ["modifyvm", :id, "--memory", 2048]
-                vb1.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+                vb1.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
         end
     vm1.vm.provision "shell", path: "hosts_master.sh"
     vm1.vm.provision "shell", path: "master.sh"
@@ -47,7 +47,7 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
         vm2.vm.provider "virtualbox" do |vb2|
                 vb2.name = "kube-node2"
                 vb2.customize ["modifyvm", :id, "--memory", 1024]
-                vb2.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+                vb2.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
         end
     vm2.vm.provision "shell", path: "hosts_node2.sh"
   end
@@ -63,7 +63,7 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
         vm3.vm.provider "virtualbox" do |vb3|
  	     	vb3.name = "kube-node3"
 		vb3.customize ["modifyvm", :id, "--memory", 1024]
-		vb3.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+		vb3.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
 	end
     vm3.vm.provision "shell", path: "hosts_node3.sh"
   end
@@ -78,7 +78,7 @@ config.vm.provision "shell", path: "kube.sh" # inline: $script # provisioning
     	vm4.vm.provider "virtualbox" do |vb4|
 		vb4.name = "kube-node4"
 		vb4.customize ["modifyvm", :id, "--memory", 1024]
-		vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+		vb4.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
         end
     vm4.vm.provision "shell", path: "hosts_node4.sh"
   end
