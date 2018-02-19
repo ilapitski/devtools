@@ -13,6 +13,11 @@ setenforce 0
 sed -i 's/SELINUX=disabled/SELINUX=permissive/' /etc/selinux/config
 swapoff -a
 sed -i 's/\/dev\/mapper\/centos-swap/#\/dev\/mapper\/centos-swap/' /etc/fstab
+cat <<IPV6 >  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+IPV6
+sysctl --system
 yum install -y kubelet kubeadm kubectl
 systemctl enable kubelet && systemctl start kubelet
 yum -y update
